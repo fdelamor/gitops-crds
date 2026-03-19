@@ -1,0 +1,21 @@
+kind: StorageClass
+apiVersion: storage.k8s.io/v1
+metadata:
+  name: efs-sc
+  annotations:
+    storageclass.kubernetes.io/is-default-class: "true"
+provisioner: efs.csi.aws.com
+mountOptions:
+  - tls
+  - iam
+parameters:
+  provisioningMode: efs-ap
+#  fileSystemId: ${efs_id}
+  fileSystemId: fs-089d0315656d4092e
+  directoryPerms: "700"
+  gidRangeStart: "1000" # optional
+  gidRangeEnd: "2000" # optional
+  basePath: "/dynamic_provisioning" # optional
+  subPathPattern: "$${.PVC.namespace}/$${.PVC.name}" # optional
+  ensureUniqueDirectory: "false" # optional. When dynamic provisioning is enabled, appends a UID to the pattern specified in subPathPattern.
+  reuseAccessPoint: "true" # optional. The AccessPoint can be replicated from a different cluster if same PVC name and storageclass configuration are used.
