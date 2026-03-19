@@ -1,6 +1,8 @@
 apiVersion: storage.k8s.io/v1
 kind: StorageClass
 metadata:
+  annotations:
+    argocd.argoproj.io/sync-options: Force=true,Replace=true
   name: gp2
 parameters:
   encrypted: "true"
@@ -15,13 +17,15 @@ volumeBindingMode: WaitForFirstConsumer
 apiVersion: storage.k8s.io/v1
 kind: StorageClass
 metadata:
+  annotations:
+    argocd.argoproj.io/sync-options: Force=true,Replace=true
   name: gp3
 parameters:
   encrypted: "true"
   fsType: ext4
 #  kmsKeyId: ${kms_encryption_key_id}
   kmsKeyId: 74fe6a4a-6c23-4fa5-9559-4b1c682a5afe
-  type: gp2
+  type: gp3
 provisioner: kubernetes.io/aws-ebs
 reclaimPolicy: Delete
 volumeBindingMode: WaitForFirstConsumer
