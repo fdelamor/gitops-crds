@@ -1,0 +1,44 @@
+autoscaling:
+  enabled: true
+  minReplicas: 2
+certManager:
+  issuerRef:
+    kind: ClusterIssuer
+    name: ca-issuer
+clusterName: ${CLUSTER_NAME}
+controllerConfig:
+  featureGates:
+    ServiceTypeLoadBalancerOnly: true
+enableCertManager: true
+enableShield: false
+enableWaf: false
+enableWafv2: false
+image:
+  repository: ${AWS_ACCOUNT}.dkr.ecr.${AWS_REGION}.amazonaws.com/ecr-public/eks/aws-load-balancer-controller
+  tag: v2.17.1
+nodeSelector:
+  kubernetes.sds.com/mode: system
+  kubernetes.sds.com/type: infra
+podDisruptionBudget:
+  maxUnavailable: 1
+resources:
+  limits:
+    cpu: 100m
+    memory: 128Mi
+  requests:
+    cpu: 50m
+    memory: 64Mi
+serviceAccount:
+  annotations:
+    eks.amazonaws.com/role-arn: arn:aws:iam::${AWS_ACCOUNT}:role/custom-service-role/IRSA-AWSLoadBalancerRole-${CLUSTER_NAME}
+  name: aws-load-balancer-controller
+tolerations:
+- key: CriticalAddonsOnly
+  operator: Exists
+topologySpreadConstraints:
+- labelSelector:
+    matchLabels:
+      app.kubernetes.io/name: aws-load-balancer-controller
+  maxSkew: 1
+  topologyKey: topology.kubernetes.io/zone
+  whenUnsatisfiable: DoNotSchedule
